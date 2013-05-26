@@ -1,0 +1,262 @@
+
+001 import java.awt.*;
+
+002 import java.applet.*;
+
+003 import java.util.Date;
+
+004
+
+005 public class ac extends Applet implements Runnable
+
+006 {
+
+007 Graphics og;
+
+008 Image oi;
+
+009 Thread t = null;
+
+010 int width, height, delay = 500;
+
+011
+
+012 Date currTime;
+
+013 int timeH, timeM, timeS, radius = 50, lenH, lenM, lenS,
+
+014 lenIn, cx, cy, x1, y1, x2, y2;
+
+015
+
+016 public void init()
+
+017 {
+
+018 super.init();
+
+019 width = size().width;
+
+020 height = size().height;
+
+021 resize(width, height);
+
+022
+
+023 lenH = 5 * radius / 10;
+
+024 lenM = 6 * radius / 10;
+
+025 lenS = 7 * radius / 10;
+
+026 lenIn = 8 * radius / 10;
+
+027 cx = width / 2;
+
+028 cy = height / 2;
+
+029
+
+030 oi = createImage(width, height);
+
+031 og = oi.getGraphics();
+
+032 }
+
+033
+
+034 public void start()
+
+035 {
+
+036 if (t == null)
+
+037 {
+
+038 t = new Thread(this);
+
+039 t.start();
+
+040 }
+
+041 }
+
+042
+
+043 public void stop()
+
+044 {
+
+045 t.stop();
+
+046 t = null;
+
+047 }
+
+048
+
+049 public void run()
+
+050 {
+
+051 Thread.currentThread().setPriority(Thread.NORM_PRIORITY - 1);
+
+052 while (true)
+
+053 {
+
+054 repaint();
+
+055 try
+
+056 {
+
+057 Thread.sleep(delay);
+
+058 }
+
+059 catch (InterruptedException e) {}
+
+060 }
+
+061 }
+
+062
+
+063 public void update(Graphics g)
+
+064 {
+
+065 paint(g);
+
+066 }
+
+067
+
+068 public void paint(Graphics g)
+
+069 {
+
+070 og.setColor(new Color(170, 170, 170));
+
+071 og.fillRect(0, 0, width, height);
+
+072 currTime = new Date();
+
+073 timeH = currTime.getHours();
+
+074 timeM = currTime.getMinutes();
+
+075 timeS = currTime.getSeconds();
+
+076
+
+077 if (timeH >= 12)
+
+078 timeH -= 12;
+
+079
+
+080 for (int i = 1; i < 13; i++)
+
+081 {
+
+082 og.setColor(new Color(20, 20, 20));
+
+083 x2 = (int)(cx + radius * Math.sin(i * 2 * 3.14159f / 12));
+
+084 y2 = (int)(cy - radius * Math.cos(i * 2 * 3.14159f / 12));
+
+085 if (i % 3 != 0)
+
+086 {
+
+087 x1 = (int)(cx + 0.9f * radius * Math.sin(i * 2 * 3.14159f / 12));
+
+088 y1 = (int)(cy - 0.9f * radius * Math.cos(i * 2 * 3.14159f / 12));
+
+089 }
+
+090 else
+
+091 {
+
+092 x1 = (int)(cx + 0.8f * radius * Math.sin(i * 2 * 3.14159f / 12));
+
+093 y1 = (int)(cy - 0.8f * radius * Math.cos(i * 2 * 3.14159f / 12));
+
+094 }
+
+095 og.drawLine(x1, y1, x2, y2);
+
+096 og.setColor(new Color(230, 230, 230));
+
+097 og.drawLine(x1 - 1, y1 - 1, x2 - 1, y2 - 1); 098 }
+
+099 og.setColor(new Color(20, 20, 20));
+
+100 x2 = (int)(cx + lenH * Math.sin((timeH + timeM / 60.0f + timeS / 3600.0f)
+
+101 * 2 * 3.14159f / 12));
+
+102 y2 = (int)(cy - lenH * Math.cos((timeH + timeM / 60.0f + timeS / 3600.0f)
+
+103 * 2 * 3.14159f / 12));
+
+104 og.drawLine(cx, cy, x2, y2);
+
+105 og.setColor(Color.red);
+
+106 og.drawLine(cx - 1, cy - 1, x2 - 1, y2 - 1);
+
+107 108 og.setColor(new Color(20, 20, 20));
+
+109 x2 = (int)(cx + lenM * Math.sin((timeM + timeS / 60.0f) * 2 * 3.14159f / 60));
+
+110 y2 = (int)(cy - lenM * Math.cos((timeM + timeS / 60.0f) * 2 * 3.14159f / 60));
+
+111 og.drawLine(cx, cy, x2, y2);
+
+112 og.setColor(Color.green);
+
+113 og.drawLine(cx - 1, cy - 1, x2 - 1, y2 - 1); 114
+
+115 og.setColor(new Color(20, 20, 20));
+
+116 x2 = (int)(cx + lenS * Math.sin(timeS * 2 * 3.14159f / 60));
+
+117 y2 = (int)(cy - lenS * Math.cos(timeS * 2 * 3.14159f / 60));
+
+118 og.drawLine(cx, cy, x2, y2);
+
+119 og.setColor(Color.blue);
+
+120 og.drawLine(cx - 1, cy - 1, x2 - 1, y2 - 1);
+
+121
+
+122 og.setColor(new Color(20, 20, 20));
+
+123 og.drawOval((width - 2 * radius) / 2, (height - 2 * radius) / 2, 2 * radius,
+
+124 2 * radius);
+
+125 og.setColor(new Color(230, 230, 230));
+
+126 og.drawOval((width - 2 * radius) / 2 - 1, (height - 2 * radius) / 2 - 1,
+
+127 2 * radius, 2 * radius);
+
+128
+
+129 g.drawImage(oi, 0, 0, this);
+
+130 }
+
+131 }
+
+
+
+source code for the analog clock < applet code=ac.class width=120 height=120>
+
+HTML example for the analog clock 
